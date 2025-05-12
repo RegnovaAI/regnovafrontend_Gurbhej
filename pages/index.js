@@ -389,6 +389,7 @@ import RiskCard from "../components/RiskCard";
 import { generatePDFReport } from "../utils/generatePDF";
 import { generateCSV } from "../utils/generateCSV";
 import { auditTypes } from "@/utils/constant";
+import HeroSection from "@/components/HeroSection";
 
 export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -415,6 +416,8 @@ export default function UploadPage() {
       acceptedFiles.forEach((file) => {
         formData.append("file", file); // Append multiple files
       });
+
+      formData.append("auditOptions", JSON.stringify(selectedAuditTypes));
 
       try {
         const response = await fetch(
@@ -489,14 +492,14 @@ export default function UploadPage() {
 
   return (
     <div
-      className="pt-32 min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white px-4 py-10"
+      className="pt-40 min-h-screen flex flex-col bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white px-4 py-10"
       style={{
         backgroundImage: "url(/bg-hero.png)",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="w-full max-w-2xl text-center space-y-10">
+      <div className="w-full max-w-4xl mx-auto text-center space-y-10">
         {/* <img
           src="/regnovaai-logo.png"
           alt="RegnovaAI Logo"
@@ -505,186 +508,187 @@ export default function UploadPage() {
           height="140"
         /> */}
 
-        <div className="space-y-3">
-          <h1 className="text-2xl sm:text-4xl font-bold">
-            Welcome to RegnovaAI
-          </h1>
-          <p className="text-lg text-white">
+        <main style={{ minHeight: "calc(100vh - 400px)", }}>
+          <div className="space-y-3 mb-20">
+            <h1 className="text-2xl sm:text-4xl font-bold">
+              Welcome to RegnovaAI
+            </h1>
+            {/* <p className="text-lg text-white">
             AI-powered risk analysis, compliance scoring, and audit reporting
             for your documents.
-          </p>
-        </div>
-        {selectAuditOption && (
-          <div className="max-w-lg mx-auto">
-            <h3 className="mb-5 text-2xl">Select Audit Types</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              {auditTypes.map((auditType) => (
-                <div
-                  key={auditType}
-                  className={`border border-1 rounded-lg p-2 cursor-pointer ${
-                    selectedAuditTypes.includes(auditType)
-                      ? "bg-[#0e1543]" // Selected background color
-                      : "bg-[#000f26]" // Default background color
-                  } border-[#3e5074] hover:bg-[#0e1543]`}
-                  onClick={() => toggleAuditType(auditType)}
-                >
-                  {auditType}
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-center mt-4 gap-2 mt-8">
-              <button
-                onClick={() => setSelectAuditOption(false)}
-                className="px-4 py-2 cursor-pointer  border border-[#3e5074] bg-[#0e1543] text-white rounded-xl transition"
-              >
-                Get Started
-              </button>
-              <button
-                onClick={() => setSelectAuditOption(false)}
-                className="px-4 py-2 cursor-pointer  border border-[#3e5074] bg-[#0e1543] text-white rounded-xl transition"
-              >
-                Request a Demo
-              </button>
-            </div>
+          </p> */}
+            <HeroSection />
           </div>
-        )}
-
-        {!selectAuditOption && (
-          <>
-            <div
-              {...getRootProps()}
-              className="cursor-pointer border-1 border-[#3e5074] bg-[#000f26] rounded-xl p-8 shadow-xl transition"
-            >
-              <input {...getInputProps()} />
-              <div className="flex flex-col items-center space-y-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-12 w-12 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  width="40"
-                  height="40"
+          {selectAuditOption && (
+            <div className="max-w-2xl mx-auto">
+              <h3 className="mb-5 text-2xl">Select Audit Types</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+                {auditTypes.map((auditType) => (
+                  <div
+                    key={auditType}
+                    className={`border border-1 rounded-lg p-2 cursor-pointer transition duration-300 ease-in-out
+                  ${
+                    selectedAuditTypes.includes(auditType)
+                      ? "bg-[#0e1543] pulse-bg" // Selected with pulse
+                      : "bg-[#000f26] pulse-bg" // Default background
+                  }
+                  border-[#3e5074] hover:bg-[#0e1543]`}
+                    onClick={() => toggleAuditType(auditType)}
+                  >
+                    {auditType}
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-center mt-4 gap-2 mt-8">
+                <button
+                  onClick={() => {
+                    setSelectAuditOption(false);
+                    setRiskReport([]);
+                    setSelectedFile(null);
+                  }}
+                  className="px-4 py-2 cursor-pointer  border border-[#3e5074] bg-[#0e1543] text-white rounded-xl transition"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 7l-4-4m0 0L8 7m4-4v12"
-                  />
-                </svg>
-                <p className="text-lg font-normal text-white">
-                  Drag and drop a document here, or click to select one
-                </p>
-                <button className="px-4 py-2 cursor-pointer  border border-[#3e5074] bg-[#0e1543] text-white rounded transition">
-                  Browse Files
+                  Get Started
+                </button>
+                <button
+                  onClick={loadDemoFile}
+                  className="px-4 py-2 cursor-pointer  border border-[#3e5074] bg-[#0e1543] text-white rounded-xl transition"
+                >
+                  Try Demo File
                 </button>
               </div>
             </div>
+          )}
 
-            <button
+          {!selectAuditOption && (
+            <>
+              <div
+                {...getRootProps()}
+                className="cursor-pointer border-1 border-[#3e5074] bg-[#000f26] rounded-xl p-8 shadow-xl transition"
+              >
+                <input {...getInputProps()} />
+                <div className="flex flex-col items-center space-y-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    width="40"
+                    height="40"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 7l-4-4m0 0L8 7m4-4v12"
+                    />
+                  </svg>
+                  <p className="text-lg font-normal text-white">
+                    Drag and drop a document here, or click to select one
+                  </p>
+                  <button className="px-4 py-2 cursor-pointer  border border-[#3e5074] bg-[#0e1543] text-white rounded transition">
+                    Browse Files
+                  </button>
+                </div>
+              </div>
+
+              {/* <button
               onClick={loadDemoFile}
               className="px-4 py-2 cursor-pointer border border-[#3e5074] bg-[#0e1543] text-white rounded transition"
             >
               🚀 Try Demo File
-            </button>
-          </>
-        )}
+            </button> */}
+            </>
+          )}
 
-        {uploading && (
-          <div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div className="bg-blue-600 h-3 rounded-full animate-pulse w-2/3"></div>
+          {uploading && (
+            <div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="bg-blue-600 h-3 rounded-full animate-pulse w-2/3"></div>
+              </div>
+              <p className="text-sm text-blue-200 mt-2">
+                Analyzing document...
+              </p>
             </div>
-            <p className="text-sm text-blue-200 mt-2">Analyzing document...</p>
-          </div>
-        )}
+          )}
 
-        {selectedFile?.length > 0 && (
-          <div className="mt-6">
-            <h2 className="text-2xl font-semibold">Selected Files:</h2>
-            <ul className="list-disc list-inside text-left">
-              {selectedFile.map((file, index) => (
-                <li key={index} className="text-sm text-blue-100">
-                  <div className="bg-green-100 text-green-800 px-4 py-2 rounded shadow-sm">
-                    ✅ File Selected: {file.name}
-                  </div>
-                </li>
+          {selectedFile?.length > 0 && (
+            <div className="mt-6">
+              <h2 className="text-2xl font-semibold">Selected Files:</h2>
+              <ul className="list-disc list-inside text-left">
+                {selectedFile.map((file, index) => (
+                  <li key={index} className="text-sm text-blue-100">
+                    <div className="bg-green-100 text-green-800 px-4 py-2 rounded shadow-sm">
+                      ✅ File Selected: {file.name}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {riskReport.length > 0 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-white">
+                🛡️ Flagged Compliance Risks
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-lg">
+                <div className="bg-red-100 text-red-800 py-2 px-4 rounded-lg shadow">
+                  🟥 High: {countByRisk.High}
+                </div>
+                <div className="bg-yellow-100 text-yellow-800 py-2 px-4 rounded-lg shadow">
+                  🟧 Medium: {countByRisk.Medium}
+                </div>
+                <div className="bg-green-100 text-green-800 py-2 px-4 rounded-lg shadow">
+                  🟩 Low: {countByRisk.Low}
+                </div>
+              </div>
+
+              {riskReport.map((risk, index) => (
+                <div key={index} className="mt-4">
+                  <RiskCard {...risk} />
+                </div>
               ))}
-            </ul>
-          </div>
-        )}
 
-        {riskReport.length > 0 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-white">
-              🛡️ Flagged Compliance Risks
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-lg">
-              <div className="bg-red-100 text-red-800 py-2 px-4 rounded-lg shadow">
-                🟥 High: {countByRisk.High}
-              </div>
-              <div className="bg-yellow-100 text-yellow-800 py-2 px-4 rounded-lg shadow">
-                🟧 Medium: {countByRisk.Medium}
-              </div>
-              <div className="bg-green-100 text-green-800 py-2 px-4 rounded-lg shadow">
-                🟩 Low: {countByRisk.Low}
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <button
+                  onClick={() =>
+                    generateCSV(selectedFile?.name || "document", riskReport)
+                  }
+                  className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 shadow"
+                >
+                  📊 Download CSV Report
+                </button>
+                <button
+                  onClick={() =>
+                    generatePDFReport(
+                      selectedFile?.name || "document",
+                      riskReport
+                    )
+                  }
+                  className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 shadow"
+                >
+                  📄 Download PDF Report
+                </button>
               </div>
             </div>
-
-            {riskReport.map((risk, index) => (
-              <div key={index} className="mt-4">
-                <RiskCard {...risk} />
-              </div>
-            ))}
-
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-              <button
-                onClick={() =>
-                  generateCSV(selectedFile?.name || "document", riskReport)
-                }
-                className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 shadow"
-              >
-                📊 Download CSV Report
-              </button>
-              <button
-                onClick={() =>
-                  generatePDFReport(
-                    selectedFile?.name || "document",
-                    riskReport
-                  )
-                }
-                className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 shadow"
-              >
-                📄 Download PDF Report
-              </button>
-            </div>
+          )}
+        </main>
+        <div className="mb-6">
+          <p className="mb-2">Powered by</p>
+          <div className="flex justify-center items-center gap-4">
+            <img
+              src="/said-logo.png"
+              alt="Said Business School"
+              className="w-16 h-16 border"
+            />
+            <img
+              src="/oxford-logo.png"
+              alt="Oxford University"
+              className="w-16 h-16 border"
+            />
           </div>
-        )}
-
-        <div className="">
-          <h3 className=" text-white text-2xl  text-center font-medium mb-2">
-            About RegnovaAI
-          </h3>
-          <p className="text-white text-sm text-left font-normal">
-            RegnovaAI is a pioneering AI startup focused on streamlining
-            compliance risk audits for enterprises. By leveraging advanced
-            document parsing and LLM-driven analysis, RegnovaAI delivers
-            actionable reports on data handling, consent, GDPR, and more —
-            helping teams mitigate risk and stay compliant effortlessly.
-          </p>
-        </div>
-        <div className="flex justify-center items-center gap-4 mt-6">
-          <img
-            src="/said-logo.png"
-            alt="Said Business School"
-            className="w-16 h-16 border"
-          />
-          <img
-            src="/oxford-logo.png"
-            alt="Oxford University"
-            className="w-16 h-16 border"
-          />
         </div>
 
         <footer className="text-sm text-blue-200">
